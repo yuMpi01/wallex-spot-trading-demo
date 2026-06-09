@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useEffect, useRef, memo } from 'react';
 
@@ -7,6 +7,9 @@ function TradingViewWidget() {
 
   useEffect(
     () => {
+      const currentContainer = container.current;
+      if (!currentContainer) return;
+
       const script = document.createElement("script");
       script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
       script.type = "text/javascript";
@@ -25,7 +28,7 @@ function TradingViewWidget() {
           "locale": "en",
           "save_image": true,
           "style": "1",
-          "symbol": "BITSTAMP:BTCUSD",
+          "symbol": "BINANCE:BTCUSD",
           "theme": "dark",
           "timezone": "Etc/UTC",
           "backgroundColor": "#0F0F0F",
@@ -36,10 +39,13 @@ function TradingViewWidget() {
           "studies": [],
           "autosize": true
         }`;
+      currentContainer.appendChild(script);
 
-      if (container.current) {
-        container.current.appendChild(script);
-      }
+      return () => {
+        if (currentContainer.contains(script)) {
+          currentContainer.removeChild(script);
+        }
+      };
     },
     []
   );
@@ -47,7 +53,7 @@ function TradingViewWidget() {
   return (
     <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }}>
       <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
-      <div className="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BTCUSD/?exchange=BITSTAMP" rel="noopener nofollow" target="_blank"></a><span className="trademark"> by TradingView</span></div>
+      <div className="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BTCUSD/?exchange=BINANCE" rel="noopener nofollow" target="_blank"><span className="blue-text">Bitcoin price</span></a><span className="trademark"> by TradingView</span></div>
     </div>
   );
 }
